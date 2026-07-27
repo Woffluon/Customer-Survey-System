@@ -1,0 +1,55 @@
+{
+  "survey": {
+    "inactive": "Bu anket artık aktif değil.",
+    "expired": "Bu anketin süresi dolmuş."
+  },
+  "form": {
+    "submit": "Yanıtları Gönder",
+    "submitting": "Gönderiliyor...",
+    "next": "İleri",
+    "previous": "Geri",
+    "required": "Bu alan zorunludur.",
+    "step": "Adım {current} / {total}"
+  },
+  "respondent": {
+    "title": "İletişim Bilgileri",
+    "name": "Adınız Soyadınız",
+    "email": "E-posta Adresiniz",
+    "company": "Şirket / Kurum Adı"
+  },
+  "errors": {
+    "network": "Bir ağ hatası oluştu. Lütfen tekrar deneyin.",
+    "rateLimited": "Çok hızlı gönderim yaptınız. Lütfen bir dakika bekleyin.",
+    "turnstile": "Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.",
+    "validation": "Lütfen işaretli alanları kontrol edin."
+  },
+  "thankYou": {
+    "title": "Teşekkürler!",
+    "message": "{title} yanıtınız başarıyla alındı.",
+    "generic": "Yanıtınız başarıyla gönderildi."
+  },
+  "language": {
+    "tr": "TR",
+    "en": "EN"
+  },
+  "notFound": {
+    "badge": "Hata 404",
+    "title": "Sayfa Bulunamadı",
+    "message": "Aradığınız anket veya sayfa mevcut değil, kaldırılmış veya süresi dolmuş olabilir.",
+    "back": "Anasayfaya Dön"
+  },
+  "home": {
+    "title": "Müşteri Anket & Keşif Sistemi",
+    "description": "Full-Stack Developer & UI/UX Specialist Efe Arabacı tarafından dijital ürün süreçlerini hızlandırmak, müşteri beklentilerini eksiksiz analiz etmek ve teslimat memnuniyetini en üst düzeye çıkarmak için tasarlanmıştır.",
+    "activeForms": "Aktif Anket Formları",
+    "availableCount": "{count} Form Kullanılabilir",
+    "startSurvey": "Ankete Başla",
+    "activeStatus": "Yayında & Aktif",
+    "onboardingTitle": "Proje Başlangıç & Keşif Anketi",
+    "onboardingDesc": "Projemizin hedeflerini, vizyonunu, hedef kitlesini ve başarı kriterlerini netleştirmek için hazırlanan detaylı keşif formu.",
+    "completionTitle": "Proje Teslimat & Müşteri Memnuniyeti Anketi",
+    "completionDesc": "Tamamlanan projemizin genel değerlendirmesi, memnuniyet düzeyiniz ve gelecek iş birliklerimiz için geri bildirim anketi.",
+    "rights": "Tüm hakları saklıdır.",
+    "tagline": "Full-Stack Developer & UI/UX Specialist — High Performance Web Applications"
+  }
+}

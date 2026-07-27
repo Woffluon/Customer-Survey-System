@@ -1,0 +1,20 @@
+:root {
+  /* Light Theme */
+  --bg: #f4f4f0;
+  --fg: #1a1a1a;
+  --accent: #d94625;
+  --muted: #525252;
+  --surface: #ffffff;
+  --border: rgba(26, 26, 26, 0.12);
+}
+
+.dark {
+  /* Dark Theme */
+  --bg: #0a0a0a;
+  --fg: #f0f0f0;
+  --accent: #e85d3b;
+  --muted: #b0b0b0;
+  --surface: #141414;
+  --border: rgba(240, 240, 240, 0.15);
+}
+

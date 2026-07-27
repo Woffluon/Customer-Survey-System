@@ -1,0 +1,95 @@
+# ==========================================
+# Dependencies & Package Managers
+# ==========================================
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Next.js & Build Outputs
+# ==========================================
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.override
+*.pem
+*.key
+*.crt
+
+# ==========================================
+# Vercel & Cloud Deployment Caches
+# ==========================================
+.vercel
+.turbo
+
+# ==========================================
+# Testing & Coverage Caches
+# ==========================================
+coverage/
+.nyc_output/
+cypress/screenshots/
+cypress/videos/
+.playwright/
+test-results/
+
+# ==========================================
+# IDE & Editor Settings
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ==========================================
+# Operating System Junk Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Logs & Temporary Files
+# ==========================================
+logs/
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# ==========================================
+# Agent & AI Cache Directories
+# ==========================================
+.agents/
+.gemini/

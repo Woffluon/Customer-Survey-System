@@ -1,0 +1,55 @@
+{
+  "survey": {
+    "inactive": "This survey is no longer active.",
+    "expired": "This survey has expired."
+  },
+  "form": {
+    "submit": "Submit Responses",
+    "submitting": "Submitting...",
+    "next": "Next",
+    "previous": "Back",
+    "required": "This field is required.",
+    "step": "Step {current} of {total}"
+  },
+  "respondent": {
+    "title": "Contact Information",
+    "name": "Full Name",
+    "email": "Email Address",
+    "company": "Company / Organization"
+  },
+  "errors": {
+    "network": "A network error occurred. Please try again.",
+    "rateLimited": "You are submitting too fast. Please wait a minute.",
+    "turnstile": "Security verification failed. Please try again.",
+    "validation": "Please check the highlighted fields."
+  },
+  "thankYou": {
+    "title": "Thank You!",
+    "message": "Your response to {title} has been received.",
+    "generic": "Your response has been submitted successfully."
+  },
+  "language": {
+    "tr": "TR",
+    "en": "EN"
+  },
+  "notFound": {
+    "badge": "Error 404",
+    "title": "Page Not Found",
+    "message": "The survey or page you are looking for does not exist, has been moved, or is no longer active.",
+    "back": "Back to Homepage"
+  },
+  "home": {
+    "title": "Client Survey & Discovery System",
+    "description": "Crafted by Full-Stack Developer & UI/UX Specialist Efe Arabacı to streamline digital product workflows, analyze client expectations, and maximize delivery satisfaction.",
+    "activeForms": "Active Survey Forms",
+    "availableCount": "{count} Forms Available",
+    "startSurvey": "Start Survey",
+    "activeStatus": "Live & Active",
+    "onboardingTitle": "Project Kickoff & Discovery Survey",
+    "onboardingDesc": "Discovery survey designed to clarify project goals, vision, target audience, and key success criteria.",
+    "completionTitle": "Project Delivery & Client Satisfaction Survey",
+    "completionDesc": "Feedback survey for evaluating overall project outcomes, satisfaction level, and future collaboration opportunities.",
+    "rights": "All rights reserved.",
+    "tagline": "Full-Stack Developer & UI/UX Specialist — High Performance Web Applications"
+  }
+}

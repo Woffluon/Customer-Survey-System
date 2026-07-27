@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@import "../survey/styles/tokens.css";
+
+@theme {
+  /* Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Fluid Typography Scale (Major Third Scale) */
+  --text-xs: clamp(0.69rem, 0.66rem + 0.18vw, 0.80rem);
+  --text-sm: clamp(0.83rem, 0.78rem + 0.29vw, 1.00rem);
+  --text-base: clamp(1.00rem, 0.91rem + 0.43vw, 1.25rem);
+  --text-lg: clamp(1.20rem, 1.07rem + 0.63vw, 1.56rem);
+  --text-xl: clamp(1.44rem, 1.26rem + 0.89vw, 1.95rem);
+  --text-2xl: clamp(1.73rem, 1.48rem + 1.24vw, 2.44rem);
+  --text-3xl: clamp(2.07rem, 1.73rem + 1.70vw, 3.05rem);
+  --text-4xl: clamp(2.49rem, 2.03rem + 2.31vw, 3.82rem);
+
+  /* Color Mapping */
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "locl" 1, "kern" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Grain/noise overlay - matched 100% with portfolio */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+}

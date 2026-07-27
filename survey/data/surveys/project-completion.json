@@ -1,0 +1,165 @@
+{
+  "token": "project-completion",
+  "title": "Proje Teslimat & Müşteri Memnuniyeti Anketi",
+  "description": "Tamamlanan projemizin genel değerlendirmesi, memnuniyet düzeyiniz ve gelecek iş birliklerimiz için geri bildirim anketi.",
+  "defaultLanguage": "tr",
+  "active": true,
+  "expiresAt": null,
+  "respondent": {
+    "collectName": true,
+    "collectEmail": true,
+    "collectCompany": true
+  },
+  "questions": [
+    {
+      "id": "overall_satisfaction",
+      "type": "rating",
+      "label": {
+        "tr": "Projenin genel sonucundan ve teslim edilen işin kalitesinden ne kadar memnunsunuz?",
+        "en": "How satisfied are you with the overall project outcome and delivered quality?"
+      },
+      "required": true,
+      "min": 1,
+      "max": 10
+    },
+    {
+      "id": "nps_recommendation",
+      "type": "rating",
+      "label": {
+        "tr": "Hizmetlerimizi iş ortaklarınıza veya sektördeki diğer şirketlere tavsiye etme olasılığınız nedir?",
+        "en": "How likely are you to recommend our services to colleagues or other companies?"
+      },
+      "required": true,
+      "min": 1,
+      "max": 10
+    },
+    {
+      "id": "top_strengths",
+      "type": "multi_choice",
+      "label": {
+        "tr": "Birlikte çalışma sürecimizde en çok memnun kaldığınız güçlü yönlerimiz nelerdi?",
+        "en": "What were our top strengths during our collaboration?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "communication",
+          "label": {
+            "tr": "Şeffaf & Hızlı İletişim",
+            "en": "Transparent & Fast Communication"
+          }
+        },
+        {
+          "id": "code_quality",
+          "label": {
+            "tr": "Üst Düzey Kod Kalitesi & Performans",
+            "en": "Top-Tier Code Quality & Performance"
+          }
+        },
+        {
+          "id": "design_aesthetics",
+          "label": {
+            "tr": "Tasarım Estetiği & Detay Hassasiyeti",
+            "en": "Design Aesthetics & Attention to Detail"
+          }
+        },
+        {
+          "id": "timely_delivery",
+          "label": {
+            "tr": "Zamanında Teslimat & Disiplin",
+            "en": "On-Time Delivery & Discipline"
+          }
+        },
+        {
+          "id": "problem_solving",
+          "label": {
+            "tr": "Problem Çözme & Teknik Danışmanlık",
+            "en": "Problem Solving & Technical Guidance"
+          }
+        }
+      ]
+    },
+    {
+      "id": "client_testimonial",
+      "type": "long_text",
+      "label": {
+        "tr": "Web sitemizde ve portfolyomuzda yer vermek üzere proje deneyiminiz hakkındaki duygu ve düşünceleriniz (Referans/Testimonial)",
+        "en": "Your testimonial / review about working with us, to be featured on our website and portfolio"
+      },
+      "required": false
+    },
+    {
+      "id": "allow_public_quote",
+      "type": "single_choice",
+      "label": {
+        "tr": "Yorumunuzun ve şirket logonuzun portfolyomuzda referans olarak gösterilmesine izin veriyor musunuz?",
+        "en": "Do you permit featuring your review and company logo as a reference in our portfolio?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "yes_full_permission",
+          "label": {
+            "tr": "Evet, ismim ve logo ile birlikte yayınlanabilir",
+            "en": "Yes, can be published with my name and logo"
+          }
+        },
+        {
+          "id": "anonymous_only",
+          "label": {
+            "tr": "İsimsiz / Anonim olarak yayınlanabilir",
+            "en": "Can be published anonymously"
+          }
+        },
+        {
+          "id": "no_permission",
+          "label": {
+            "tr": "Hayır, sadece şirket içi değerlendirme olarak kalsın",
+            "en": "No, keep as internal feedback only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "future_retainer_interest",
+      "type": "single_choice",
+      "label": {
+        "tr": "Proje sonrası düzenli teknik destek, bakım veya yeni özellik geliştirme (Retainer) hizmetiyle ilgilenir misiniz?",
+        "en": "Would you be interested in ongoing technical support, maintenance, or feature updates (Retainer)?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "yes_discuss_details",
+          "label": {
+            "tr": "Evet, detayları ve kapsamı görüşmek isterim",
+            "en": "Yes, I would like to discuss details and scope"
+          }
+        },
+        {
+          "id": "when_needed",
+          "label": {
+            "tr": "Şu an gerek yok, ihtiyaç halinde iletişime geçeceğim",
+            "en": "Not right now, I will reach out when needed"
+          }
+        },
+        {
+          "id": "not_interested",
+          "label": {
+            "tr": "İlgilenmiyorum",
+            "en": "Not interested"
+          }
+        }
+      ]
+    },
+    {
+      "id": "final_thoughts",
+      "type": "long_text",
+      "label": {
+        "tr": "Kapanışta iletmek istediğiniz son görüş, öneri veya dilekleriniz",
+        "en": "Any final thoughts, suggestions, or remarks as we conclude"
+      },
+      "required": false
+    }
+  ]
+}

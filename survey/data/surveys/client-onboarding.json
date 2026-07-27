@@ -1,0 +1,147 @@
+{
+  "token": "client-onboarding",
+  "title": "Proje Başlangıç & Keşif Anketi",
+  "description": "Projemizin hedeflerini, vizyonunu, iletişim tercihlerini ve başarı kriterlerini netleştirmek için hazırladığımız keşif anketi.",
+  "defaultLanguage": "tr",
+  "active": true,
+  "expiresAt": null,
+  "respondent": {
+    "collectName": true,
+    "collectEmail": true,
+    "collectCompany": true
+  },
+  "questions": [
+    {
+      "id": "business_goals",
+      "type": "long_text",
+      "label": {
+        "tr": "Bu projenin ana iş hedefi ve çözmek istediği temel problem nedir?",
+        "en": "What is the primary business goal and key problem this project aims to solve?"
+      },
+      "required": true
+    },
+    {
+      "id": "target_audience",
+      "type": "short_text",
+      "label": {
+        "tr": "Hedef kitleniz veya kullanıcı profiliniz kimlerden oluşuyor?",
+        "en": "Who is your target audience or primary user profile?"
+      },
+      "required": true
+    },
+    {
+      "id": "key_deliverables",
+      "type": "multi_choice",
+      "label": {
+        "tr": "Projede öncelikli olarak odaklanılmasını istediğiniz ana alanlar nelerdir?",
+        "en": "What are the key areas you want prioritized in this project?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "web_development",
+          "label": {
+            "tr": "Özel Frontend / Web Geliştirme",
+            "en": "Custom Frontend / Web Development"
+          }
+        },
+        {
+          "id": "ui_ux_design",
+          "label": {
+            "tr": "UI/UX Tasarımı ve Tasarım Sistemi",
+            "en": "UI/UX Design & Design System"
+          }
+        },
+        {
+          "id": "performance_seo",
+          "label": {
+            "tr": "Yüksek Performans & SEO Optimizasyonu",
+            "en": "High Performance & SEO Optimization"
+          }
+        },
+        {
+          "id": "creative_animations",
+          "label": {
+            "tr": "Yaratıcı Etkileşimler & Animasyonlar",
+            "en": "Creative Interactions & Animations"
+          }
+        }
+      ]
+    },
+    {
+      "id": "brand_keywords",
+      "type": "short_text",
+      "label": {
+        "tr": "Markanızı ve projenin hissettirmesini istediğiniz duygu/tarzı tanımlayan 3 anahtar kelime nedir?",
+        "en": "What are 3 keywords describing your brand tone and desired experience?"
+      },
+      "required": true
+    },
+    {
+      "id": "benchmark_links",
+      "type": "long_text",
+      "label": {
+        "tr": "Beğendiğiniz, ilham aldığınız veya rakip olarak gördüğünüz web sitesi / ürün bağlantıları",
+        "en": "Website / product links you admire, draw inspiration from, or view as competitors"
+      },
+      "required": false
+    },
+    {
+      "id": "communication_channel",
+      "type": "single_choice",
+      "label": {
+        "tr": "Süreç boyunca tercih ettiğiniz birincil iletişim kanalı hangisidir?",
+        "en": "What is your preferred primary communication channel during the process?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "email",
+          "label": {
+            "tr": "E-posta",
+            "en": "Email"
+          }
+        },
+        {
+          "id": "slack_discord",
+          "label": {
+            "tr": "Slack / Discord",
+            "en": "Slack / Discord"
+          }
+        },
+        {
+          "id": "whatsapp_phone",
+          "label": {
+            "tr": "WhatsApp / Telefon",
+            "en": "WhatsApp / Phone"
+          }
+        },
+        {
+          "id": "weekly_calls",
+          "label": {
+            "tr": "Haftalık Online Toplantılar",
+            "en": "Weekly Online Calls"
+          }
+        }
+      ]
+    },
+    {
+      "id": "success_criteria",
+      "type": "long_text",
+      "label": {
+        "tr": "Bu projenin sizin için tam bir başarı sayılması için en kritik kriter nedir?",
+        "en": "What is the single most critical criterion for this project to be a complete success?"
+      },
+      "required": true
+    },
+    {
+      "id": "additional_notes",
+      "type": "long_text",
+      "label": {
+        "tr": "Başlamadan önce iletmek istediğiniz ek bir not, doküman veya özel gereksinim var mı?",
+        "en": "Is there any additional note, document, or specific requirement before we start?"
+      },
+      "required": false
+    }
+  ]
+}
