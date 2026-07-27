@@ -11,11 +11,13 @@ export async function verifyTurnstile(
 ): Promise<TurnstileVerifyResult> {
   const env = getEnv();
 
-  // Test / dummy token allowance for dev/testing
+  // Test / dummy token allowance for dev/testing only
+  const isDev = process.env.NODE_ENV === 'development';
   if (
-    token === 'dummy_token' ||
-    token === 'XXXX.DUMMY.TOKEN.XXXX' ||
-    token.startsWith('test_')
+    isDev &&
+    (token === 'dummy_token' ||
+      token === 'XXXX.DUMMY.TOKEN.XXXX' ||
+      token.startsWith('test_'))
   ) {
     return { success: true, errorCodes: [] };
   }

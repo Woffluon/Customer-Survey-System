@@ -19,19 +19,19 @@ export function LanguageSwitcher({ className }: { className?: string }) {
         type="button"
         onClick={() => toggleLang('tr')}
         className={cn(
-          'px-1.5 py-0.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-xs font-semibold',
+          'px-3 py-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 rounded-lg font-semibold transition-colors',
           language === 'tr' ? 'bg-foreground text-background' : 'bg-surface text-muted hover:text-foreground border border-border'
         )}
         aria-label="Türkçe diline geç"
       >
         TR
       </button>
-      <span className="text-muted font-bold">/</span>
+      <span className="text-muted font-bold px-0.5">/</span>
       <button
         type="button"
         onClick={() => toggleLang('en')}
         className={cn(
-          'px-1.5 py-0.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-xs font-semibold',
+          'px-3 py-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 rounded-lg font-semibold transition-colors',
           language === 'en' ? 'bg-foreground text-background' : 'bg-surface text-muted hover:text-foreground border border-border'
         )}
         aria-label="Switch to English language"

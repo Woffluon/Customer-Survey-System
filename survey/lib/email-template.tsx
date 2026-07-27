@@ -9,11 +9,32 @@ import {
   Hr,
   Preview,
 } from '@react-email/components';
-import { SurveyConfig } from './types';
+import { SurveyConfig, AnswerValue } from './types';
+import {
+  mainStyle,
+  containerStyle,
+  headerSectionStyle,
+  badgeStyle,
+  titleStyle,
+  metaStyle,
+  hrStyle,
+  cardStyle,
+  cardTitleStyle,
+  infoTextStyle,
+  questionBoxStyle,
+  questionNumberStyle,
+  questionLabelStyle,
+  answerTextStyle,
+  bulletItemStyle,
+  ratingBoxStyle,
+  ratingNumberStyle,
+  ratingMaxStyle,
+  footerStyle,
+} from './email-styles';
 
 interface SurveyEmailProps {
   surveyConfig: SurveyConfig;
-  answers: Record<string, any>;
+  answers: Record<string, AnswerValue>;
   respondent?: {
     name?: string;
     email?: string;
@@ -86,7 +107,7 @@ export function SurveyEmailTemplate({
                   {/* Render based on Question Type */}
                   {q.type === 'rating' && (
                     <div style={ratingBoxStyle}>
-                      <span style={ratingNumberStyle}>{rawAnswer ?? '-'}</span>
+                      <span style={ratingNumberStyle}>{String(rawAnswer ?? '-')}</span>
                       <span style={ratingMaxStyle}> / {q.max}</span>
                     </div>
                   )}
@@ -113,13 +134,13 @@ export function SurveyEmailTemplate({
                     <Text style={answerTextStyle}>
                       {(() => {
                         const option = q.options?.find((o) => o.id === rawAnswer);
-                        return option ? (option.label.tr || option.label.en) : (rawAnswer || '-');
+                        return option ? (option.label.tr || option.label.en) : (String(rawAnswer || '-'));
                       })()}
                     </Text>
                   )}
 
                   {(q.type === 'short_text' || q.type === 'long_text') && (
-                    <Text style={answerTextStyle}>{rawAnswer || '-'}</Text>
+                    <Text style={answerTextStyle}>{String(rawAnswer || '-')}</Text>
                   )}
                 </div>
               );
@@ -136,134 +157,3 @@ export function SurveyEmailTemplate({
     </Html>
   );
 }
-
-// Inline CSS Styles for Email Client Compatibility
-const mainStyle: React.CSSProperties = {
-  backgroundColor: '#f4f4f0',
-  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-  padding: '30px 0',
-};
-
-const containerStyle: React.CSSProperties = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '32px',
-  borderRadius: '12px',
-  maxWidth: '600px',
-  border: '1px solid rgba(26, 26, 26, 0.1)',
-};
-
-const headerSectionStyle: React.CSSProperties = {
-  textAlign: 'left',
-};
-
-const badgeStyle: React.CSSProperties = {
-  fontSize: '11px',
-  fontWeight: 600,
-  letterSpacing: '1px',
-  color: '#d94625',
-  textTransform: 'uppercase',
-  margin: '0 0 8px 0',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '22px',
-  fontWeight: 700,
-  color: '#1a1a1a',
-  margin: '0 0 8px 0',
-};
-
-const metaStyle: React.CSSProperties = {
-  fontSize: '13px',
-  color: '#6b6b6b',
-  margin: 0,
-};
-
-const hrStyle: React.CSSProperties = {
-  borderColor: 'rgba(26, 26, 26, 0.1)',
-  margin: '24px 0',
-};
-
-const cardStyle: React.CSSProperties = {
-  backgroundColor: '#fafafa',
-  padding: '16px 20px',
-  borderRadius: '8px',
-  border: '1px solid #eaeaea',
-};
-
-const cardTitleStyle: React.CSSProperties = {
-  fontSize: '14px',
-  fontWeight: 600,
-  color: '#1a1a1a',
-  margin: '0 0 12px 0',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-};
-
-const infoTextStyle: React.CSSProperties = {
-  fontSize: '14px',
-  color: '#333333',
-  margin: '4px 0',
-};
-
-const questionBoxStyle: React.CSSProperties = {
-  marginBottom: '20px',
-  padding: '16px',
-  backgroundColor: '#fafafa',
-  borderRadius: '8px',
-  borderLeft: '4px solid #d94625',
-};
-
-const questionNumberStyle: React.CSSProperties = {
-  fontSize: '11px',
-  fontWeight: 600,
-  color: '#6b6b6b',
-  margin: '0 0 4px 0',
-  textTransform: 'uppercase',
-};
-
-const questionLabelStyle: React.CSSProperties = {
-  fontSize: '15px',
-  fontWeight: 600,
-  color: '#1a1a1a',
-  margin: '0 0 8px 0',
-};
-
-const answerTextStyle: React.CSSProperties = {
-  fontSize: '14px',
-  color: '#2a2a2a',
-  margin: '0',
-  whiteSpace: 'pre-wrap',
-};
-
-const bulletItemStyle: React.CSSProperties = {
-  fontSize: '14px',
-  color: '#2a2a2a',
-  margin: '2px 0',
-};
-
-const ratingBoxStyle: React.CSSProperties = {
-  display: 'inline-block',
-  backgroundColor: '#f4f4f0',
-  padding: '8px 16px',
-  borderRadius: '6px',
-  marginTop: '4px',
-};
-
-const ratingNumberStyle: React.CSSProperties = {
-  fontSize: '24px',
-  fontWeight: 700,
-  color: '#d94625',
-};
-
-const ratingMaxStyle: React.CSSProperties = {
-  fontSize: '14px',
-  color: '#6b6b6b',
-};
-
-const footerStyle: React.CSSProperties = {
-  fontSize: '12px',
-  color: '#888888',
-  textAlign: 'center',
-  margin: 0,
-};

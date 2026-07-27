@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
-
-const baseUrl = 'http://anket.xn--efearabac-3pb.com';
+import { BASE_URL } from '@/survey/lib/config';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

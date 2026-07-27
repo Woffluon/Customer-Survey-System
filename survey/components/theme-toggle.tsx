@@ -1,45 +1,22 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { flushSync } from 'react-dom';
 import { cn } from '../lib/utils';
+import { useTheme } from '../lib/theme-context';
 
 interface DocumentWithViewTransition extends Omit<Document, 'startViewTransition'> {
   startViewTransition?: (callback: () => void) => { ready: Promise<void> };
 }
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const { isDark, toggleTheme: contextToggleTheme } = useTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem('survey_theme');
-    if (saved === 'light') {
-      document.documentElement.classList.remove('dark');
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      setIsDark(true);
-    }
-  }, []);
-
-
   const baseToggleTheme = useCallback(() => {
-    setIsDark((prev) => {
-      const nextDark = !prev;
-      if (nextDark) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('survey_theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('survey_theme', 'light');
-      }
-      return nextDark;
-    });
-  }, []);
+    contextToggleTheme();
+  }, [contextToggleTheme]);
 
   const toggleTheme = useCallback(() => {
     const button = buttonRef.current;
@@ -89,17 +66,13 @@ export function ThemeToggle({ className }: { className?: string }) {
     });
   }, [baseToggleTheme]);
 
-  if (!mounted) {
-    return <div className="w-8 h-8" />;
-  }
-
   return (
     <button
       type="button"
       ref={buttonRef}
       onClick={toggleTheme}
       className={cn(
-        'relative p-2 rounded-full bg-surface border border-border hover:border-foreground/30 transition-colors focus:outline-none text-foreground shadow-xs',
+        'relative p-2 rounded-full bg-surface border border-border hover:border-foreground/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 text-foreground shadow-xs',
         className
       )}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}

@@ -1,7 +1,13 @@
 {
   "survey": {
     "inactive": "This survey is no longer active.",
-    "expired": "This survey has expired."
+    "expired": "This survey has expired.",
+    "expiredMessage": "This survey response period has expired.",
+    "inactiveMessage": "This survey link is closed or no longer valid."
+  },
+  "rating": {
+    "lowest": "Lowest",
+    "highest": "Highest"
   },
   "form": {
     "submit": "Submit Responses",

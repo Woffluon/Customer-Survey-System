@@ -14,7 +14,9 @@ export interface QuestionOption {
   label: LocalizedString;
 }
 
-interface BaseQuestion {
+export type AnswerValue = string | string[] | number | undefined;
+
+export interface BaseQuestion {
   id: string;
   type: QuestionType;
   label: LocalizedString;

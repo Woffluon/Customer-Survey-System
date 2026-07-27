@@ -4,10 +4,23 @@ import { checkRateLimit, setRateLimitCookie } from '@/survey/lib/rate-limit';
 import { getSurvey } from '@/survey/lib/get-survey';
 import { buildSurveySchema } from '@/survey/lib/survey-schema';
 import { sendNotificationEmail } from '@/survey/lib/send-notification-email';
-import { ApiResponse } from '@/survey/lib/types';
+import { ApiResponse, AnswerValue } from '@/survey/lib/types';
+
+interface SubmitRequestBody {
+  surveyToken?: string;
+  surveySlug?: string;
+  turnstileToken?: string;
+  honeypot?: string;
+  respondent?: {
+    name?: string;
+    email?: string;
+    company?: string;
+  };
+  answers?: Record<string, AnswerValue>;
+}
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
-  let body: any;
+  let body: unknown;
 
   // 1. Parse JSON Body
   try {
@@ -19,7 +32,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     );
   }
 
-  const { surveyToken, surveySlug, turnstileToken, honeypot, respondent, answers } = body || {};
+  const parsedBody = (body as SubmitRequestBody) || {};
+  const { surveyToken, surveySlug, turnstileToken, honeypot, respondent, answers } = parsedBody;
   const identifier = surveySlug || surveyToken;
 
   if (!identifier) {
@@ -30,7 +44,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
   }
 
   // 2. Verify Turnstile
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+  const rawIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+  const ip = rawIp.split(',')[0].trim();
   const turnstileResult = await verifyTurnstile(turnstileToken || '', ip);
   if (!turnstileResult.success) {
     return NextResponse.json(
@@ -67,7 +82,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
 
   // 6. Validate Answers via Dynamic Zod Schema
   const schema = buildSurveySchema(survey);
-  const dataToValidate: Record<string, any> = { ...(answers || {}) };
+  const dataToValidate: Record<string, AnswerValue> = { ...(answers || {}) };
 
   if (survey.respondent.collectName) {
     dataToValidate['respondent_name'] = respondent?.name || '';
@@ -99,7 +114,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
   // 7. Dispatch Email
   const emailResult = await sendNotificationEmail({
     surveyConfig: survey,
-    answers: validation.data,
+    answers: validation.data as Record<string, AnswerValue>,
     respondent,
     submittedAt: new Date(),
     ipAddress: ip,

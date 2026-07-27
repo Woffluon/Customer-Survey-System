@@ -1,31 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { LanguageProvider } from '@/survey/i18n/use-translation';
+import { ThemeProvider, useTheme } from '@/survey/lib/theme-context';
 import { LanguageSwitcher } from './language-switcher';
 import { ThemeToggle } from './theme-toggle';
 
 const Silk = dynamic(() => import('./silk'), { ssr: false });
 
-export function SurveyShell({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const checkDark = () => document.documentElement.classList.contains('dark');
-    setIsDark(checkDark());
-
-    const observer = new MutationObserver(() => {
-      setIsDark(checkDark());
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+function ShellInner({ children }: { children?: React.ReactNode }) {
+  const { isDark } = useTheme();
 
   return (
     <LanguageProvider defaultLanguage="tr">
@@ -41,6 +26,8 @@ export function SurveyShell({ children }: { children: React.ReactNode }) {
           noiseIntensity={1.5}
           rotation={0}
         />
+        {/* Readability overlay mask */}
+        <div className="absolute inset-0 bg-background/20 pointer-events-none" />
       </div>
 
       {/* Minimal floating controls — top-right */}
@@ -59,7 +46,10 @@ export function SurveyShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-
-
-
-
+export function SurveyShell({ children }: { children?: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <ShellInner>{children}</ShellInner>
+    </ThemeProvider>
+  );
+}

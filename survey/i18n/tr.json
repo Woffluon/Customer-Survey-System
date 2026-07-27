@@ -1,7 +1,13 @@
 {
   "survey": {
     "inactive": "Bu anket artık aktif değil.",
-    "expired": "Bu anketin süresi dolmuş."
+    "expired": "Bu anketin süresi dolmuş.",
+    "expiredMessage": "Bu anketin yanıtlanma süresi dolmuştur.",
+    "inactiveMessage": "Bu anket bağlantısı kapatılmış veya artık geçerli değildir."
+  },
+  "rating": {
+    "lowest": "En Düşük",
+    "highest": "En Yüksek"
   },
   "form": {
     "submit": "Yanıtları Gönder",

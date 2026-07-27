@@ -19,7 +19,7 @@ export function LanguageProvider({
   children,
   defaultLanguage = 'tr',
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   defaultLanguage?: Language;
 }) {
   const [language, setLanguageState] = useState<Language>(defaultLanguage);

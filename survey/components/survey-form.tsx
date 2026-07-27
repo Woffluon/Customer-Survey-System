@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { SurveyConfig } from '../lib/types';
 import { buildSurveySchema } from '../lib/survey-schema';
 import { useTranslation } from '../i18n/use-translation';
 import { TurnstileWidget } from './turnstile-widget';
+import { ProgressBar } from './progress-bar';
 import { ShortText } from './question-types/short-text';
 import { LongText } from './question-types/long-text';
 import { SingleChoice } from './question-types/single-choice';
@@ -22,6 +24,8 @@ interface SurveyFormProps {
 export function SurveyForm({ config }: SurveyFormProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
+
+  const schema = useMemo(() => buildSurveySchema(config), [config]);
 
   const allQuestions = config.questions;
   const hasRespondentFields =
@@ -43,7 +47,6 @@ export function SurveyForm({ config }: SurveyFormProps) {
 
   const isRespondentStep = hasRespondentFields && currentStep === 0;
   const currentQuestion = isRespondentStep ? null : allQuestions[currentStep - questionStartIndex];
-  const progressPercentage = Math.round(((currentStep + 1) / totalDisplaySteps) * 100);
   const isLastStep = currentStep === totalDisplaySteps - 1;
 
   const clearError = (key: string) =>
@@ -60,7 +63,6 @@ export function SurveyForm({ config }: SurveyFormProps) {
   };
 
   const validateCurrentStep = (): boolean => {
-    const schema = buildSurveySchema(config);
     const dataToValidate: Record<string, unknown> = { ...answers };
     if (isRespondentStep) {
       if (config.respondent.collectName) dataToValidate['respondent_name'] = respondent.name || '';
@@ -98,7 +100,6 @@ export function SurveyForm({ config }: SurveyFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGlobalError(null);
-    const schema = buildSurveySchema(config);
     const dataToValidate: Record<string, unknown> = { ...answers };
     if (config.respondent.collectName) dataToValidate['respondent_name'] = respondent.name || '';
     if (config.respondent.collectEmail) dataToValidate['respondent_email'] = respondent.email || '';
@@ -162,107 +163,107 @@ export function SurveyForm({ config }: SurveyFormProps) {
         )}
       </div>
 
-      {/* Slim progress bar */}
-      <div className="mb-8 space-y-2">
-        <div className="flex justify-between items-center text-xs font-mono text-muted">
-          <span>{currentStep + 1} / {totalDisplaySteps}</span>
-          <span>{progressPercentage}%</span>
-        </div>
-        <div className="w-full h-px bg-border overflow-hidden">
-          <div
-            className="h-full bg-foreground transition-all duration-500 ease-out"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-      </div>
+      {/* Progress Bar Component */}
+      <ProgressBar currentStep={currentStep} totalSteps={totalDisplaySteps} />
 
       {/* Honeypot */}
-      <div style={{ position: 'absolute', left: '-9999px', opacity: 0 }} aria-hidden="true">
+      <div className="sr-only" aria-hidden="true">
         <label htmlFor="website_hp_field">Website</label>
         <input id="website_hp_field" type="text" name="website_hp_field" tabIndex={-1}
-          autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+          autoComplete="off" value={honeypot} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHoneypot(e.target.value)} />
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
-        <div className="bg-surface/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
+        <div className="bg-surface/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-sm overflow-hidden">
 
           {globalError && (
-            <div className="mb-6 px-4 py-3 rounded-lg border border-accent/30 bg-accent/5 text-accent text-sm font-mono">
+            <div role="alert" aria-live="assertive" className="mb-6 px-4 py-3 rounded-lg border border-accent/30 bg-accent/5 text-accent text-sm font-mono">
               {globalError}
             </div>
           )}
 
-          {/* Respondent step */}
-          {isRespondentStep && (
-            <div className="space-y-5">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted mb-4">
-                {t('respondent.title')}
-              </p>
-              {config.respondent.collectName && (
-                <div className="space-y-1.5">
-                  <label htmlFor="respondent_name" className="block text-sm font-medium">
-                    {t('respondent.name')} <span className="text-accent">*</span>
-                  </label>
-                  <SmoothInput id="respondent_name" type="text" value={respondent.name || ''}
-                    onChange={(e) => handleRespondentChange('name', e.target.value)}
-                    className={errors['respondent_name'] ? 'border-accent' : undefined} />
-                  {errors['respondent_name'] && (
-                    <p className="text-xs text-accent font-mono mt-1">{errors['respondent_name']}</p>
+          {/* Animated step transitions */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -15 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Respondent step */}
+              {isRespondentStep && (
+                <div className="space-y-5">
+                  <p className="text-xs font-mono uppercase tracking-wider text-muted mb-4">
+                    {t('respondent.title')}
+                  </p>
+                  {config.respondent.collectName && (
+                    <div className="space-y-1.5">
+                      <label htmlFor="respondent_name" className="block text-sm font-medium">
+                        {t('respondent.name')} <span className="text-accent">*</span>
+                      </label>
+                      <SmoothInput id="respondent_name" type="text" value={respondent.name || ''}
+                        onChange={(e) => handleRespondentChange('name', e.target.value)}
+                        className={errors['respondent_name'] ? 'border-accent' : undefined} />
+                      {errors['respondent_name'] && (
+                        <p className="text-xs text-accent font-mono mt-1">{errors['respondent_name']}</p>
+                      )}
+                    </div>
+                  )}
+                  {config.respondent.collectEmail && (
+                    <div className="space-y-1.5">
+                      <label htmlFor="respondent_email" className="block text-sm font-medium">
+                        {t('respondent.email')} <span className="text-accent">*</span>
+                      </label>
+                      <SmoothInput id="respondent_email" type="email" value={respondent.email || ''}
+                        onChange={(e) => handleRespondentChange('email', e.target.value)}
+                        className={errors['respondent_email'] ? 'border-accent' : undefined} />
+                      {errors['respondent_email'] && (
+                        <p className="text-xs text-accent font-mono mt-1">{errors['respondent_email']}</p>
+                      )}
+                    </div>
+                  )}
+                  {config.respondent.collectCompany && (
+                    <div className="space-y-1.5">
+                      <label htmlFor="respondent_company" className="block text-sm font-medium">
+                        {t('respondent.company')}
+                      </label>
+                      <SmoothInput id="respondent_company" type="text" value={respondent.company || ''}
+                        onChange={(e) => handleRespondentChange('company', e.target.value)} />
+                    </div>
                   )}
                 </div>
               )}
-              {config.respondent.collectEmail && (
-                <div className="space-y-1.5">
-                  <label htmlFor="respondent_email" className="block text-sm font-medium">
-                    {t('respondent.email')} <span className="text-accent">*</span>
-                  </label>
-                  <SmoothInput id="respondent_email" type="email" value={respondent.email || ''}
-                    onChange={(e) => handleRespondentChange('email', e.target.value)}
-                    className={errors['respondent_email'] ? 'border-accent' : undefined} />
-                  {errors['respondent_email'] && (
-                    <p className="text-xs text-accent font-mono mt-1">{errors['respondent_email']}</p>
-                  )}
-                </div>
-              )}
-              {config.respondent.collectCompany && (
-                <div className="space-y-1.5">
-                  <label htmlFor="respondent_company" className="block text-sm font-medium">
-                    {t('respondent.company')}
-                  </label>
-                  <SmoothInput id="respondent_company" type="text" value={respondent.company || ''}
-                    onChange={(e) => handleRespondentChange('company', e.target.value)} />
-                </div>
-              )}
-            </div>
-          )}
 
-          {/* Question step */}
-          {currentQuestion && (() => {
-            const error = errors[currentQuestion.id] || null;
-            const value = answers[currentQuestion.id];
-            switch (currentQuestion.type) {
-              case 'short_text':
-                return <ShortText key={currentQuestion.id} question={currentQuestion}
-                  value={typeof value === 'string' ? value : ''}
-                  onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
-              case 'long_text':
-                return <LongText key={currentQuestion.id} question={currentQuestion}
-                  value={typeof value === 'string' ? value : ''}
-                  onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
-              case 'single_choice':
-                return <SingleChoice key={currentQuestion.id} question={currentQuestion}
-                  value={typeof value === 'string' ? value : ''}
-                  onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
-              case 'multi_choice':
-                return <MultiChoice key={currentQuestion.id} question={currentQuestion}
-                  value={Array.isArray(value) ? value : []}
-                  onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
-              case 'rating':
-                return <RatingScale key={currentQuestion.id} question={currentQuestion}
-                  value={typeof value === 'number' ? value : null}
-                  onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
-            }
-          })()}
+              {/* Question step */}
+              {currentQuestion && (() => {
+                const error = errors[currentQuestion.id] || null;
+                const value = answers[currentQuestion.id];
+                switch (currentQuestion.type) {
+                  case 'short_text':
+                    return <ShortText question={currentQuestion}
+                      value={typeof value === 'string' ? value : ''}
+                      onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
+                  case 'long_text':
+                    return <LongText question={currentQuestion}
+                      value={typeof value === 'string' ? value : ''}
+                      onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
+                  case 'single_choice':
+                    return <SingleChoice question={currentQuestion}
+                      value={typeof value === 'string' ? value : ''}
+                      onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
+                  case 'multi_choice':
+                    return <MultiChoice question={currentQuestion}
+                      value={Array.isArray(value) ? value : []}
+                      onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
+                  case 'rating':
+                    return <RatingScale question={currentQuestion}
+                      value={typeof value === 'number' ? value : null}
+                      onChange={(v) => handleAnswerChange(currentQuestion.id, v)} error={error} language={language} />;
+                }
+              })()}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Navigation */}

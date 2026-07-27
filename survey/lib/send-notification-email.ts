@@ -1,12 +1,12 @@
 import { render } from '@react-email/components';
 import { Resend } from 'resend';
-import { SurveyConfig } from './types';
+import { SurveyConfig, AnswerValue } from './types';
 import { SurveyEmailTemplate } from './email-template';
 import { getEnv } from './env';
 
 interface SendEmailParams {
   surveyConfig: SurveyConfig;
-  answers: Record<string, any>;
+  answers: Record<string, AnswerValue>;
   respondent?: {
     name?: string;
     email?: string;
@@ -66,8 +66,9 @@ export async function sendNotificationEmail({
     }
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Failed to render/send notification email:', error);
-    return { success: false, error: error?.message || 'Unknown error' };
+    return { success: false, error: errorMessage };
   }
 }

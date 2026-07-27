@@ -87,22 +87,35 @@ export default function Silk({
 }: SilkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
+  const programRef = useRef<InstanceType<typeof import('ogl').Program> | null>(null);
+  const rendererRef = useRef<InstanceType<typeof import('ogl').Renderer> | null>(null);
+  const glRef = useRef<OGLRenderingContext | null>(null);
+
+  // Separate effect for color updates without WebGL re-initialization
+  useEffect(() => {
+    if (programRef.current) {
+      const [r, g, b] = hexToNormalizedRGB(color);
+      programRef.current.uniforms.uColor.value = [r, g, b];
+    }
+  }, [color]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    let renderer: InstanceType<typeof import('ogl').Renderer>;
-    let gl: OGLRenderingContext;
-    let program: InstanceType<typeof import('ogl').Program>;
     let mesh: InstanceType<typeof import('ogl').Mesh>;
     const startTime = performance.now();
     const [r, g, b] = hexToNormalizedRGB(color);
 
+    let ro: ResizeObserver | null = null;
+    let resizeHandler: (() => void) | null = null;
+
     import('ogl').then(({ Renderer, Program, Mesh, Triangle }) => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      renderer = new Renderer({ canvas, alpha: false, antialias: true, dpr });
-      gl = renderer.gl;
+      const renderer = new Renderer({ canvas, alpha: false, antialias: true, dpr });
+      rendererRef.current = renderer;
+      const gl = renderer.gl;
+      glRef.current = gl;
       gl.clearColor(r, g, b, 1);
 
       const resize = () => {
@@ -114,8 +127,9 @@ export default function Silk({
         canvas.style.width = '100%';
         canvas.style.height = '100%';
       };
+      resizeHandler = resize;
 
-      program = new Program(gl, {
+      const program = new Program(gl, {
         vertex: VERT,
         fragment: FRAG,
         uniforms: {
@@ -127,12 +141,13 @@ export default function Silk({
           uRotation:       { value: rotation },
         },
       });
+      programRef.current = program;
 
       resize();
 
       const parent = canvas.parentElement;
-      const ro = new ResizeObserver(resize);
       if (parent) {
+        ro = new ResizeObserver(resize);
         ro.observe(parent);
       } else {
         window.addEventListener('resize', resize);
@@ -140,6 +155,16 @@ export default function Silk({
 
       const geo = new Triangle(gl);
       mesh = new Mesh(gl, { geometry: geo, program });
+
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        program.uniforms.uTime.value = 0;
+        renderer.render({ scene: mesh });
+        return;
+      }
 
       const loop = (now: number) => {
         rafRef.current = requestAnimationFrame(loop);
@@ -149,17 +174,27 @@ export default function Silk({
       };
 
       rafRef.current = requestAnimationFrame(loop);
-
-      return () => {
-        ro.disconnect();
-        window.removeEventListener('resize', resize);
-      };
     });
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      if (ro) {
+        ro.disconnect();
+      }
+      if (resizeHandler) {
+        window.removeEventListener('resize', resizeHandler);
+      }
+      if (glRef.current) {
+        glRef.current.getExtension('WEBGL_lose_context')?.loseContext();
+      }
+      programRef.current = null;
+      rendererRef.current = null;
+      glRef.current = null;
     };
-  }, [speed, scale, color, noiseIntensity, rotation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speed, scale, noiseIntensity, rotation]);
 
   return (
     <canvas
@@ -169,6 +204,3 @@ export default function Silk({
     />
   );
 }
-
-
-

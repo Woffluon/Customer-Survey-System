@@ -19,9 +19,7 @@ export function InactiveSurvey({ messageKey = 'survey.inactive' }: InactiveSurve
         {t(messageKey)}
       </h2>
       <p className="text-muted text-sm sm:text-base max-w-md">
-        {messageKey === 'survey.expired'
-          ? 'Bu anketin yanıtlanma süresi dolmuştur.'
-          : 'Bu anket bağlantısı kapatılmış veya artık geçerli değildir.'}
+        {t(messageKey === 'survey.expired' ? 'survey.expiredMessage' : 'survey.inactiveMessage')}
       </p>
     </div>
   );

@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import { SurveyShell } from '@/survey/components/survey-shell';
 import { JsonLd } from '@/survey/components/json-ld';
 import { HomeView } from '@/survey/components/home-view';
+import { BASE_URL } from '@/survey/lib/config';
 
 export const metadata: Metadata = {
   title: 'Efe Arabacı | Müşteri Anket & Geri Bildirim Platformu',
   description:
     'Full-Stack Developer & UI/UX Specialist Efe Arabacı tarafından özel dijital projelere yönelik tasarlanmış editoryal müşteri onboarding, keşif ve teslimat değerlendirme sistemi.',
   alternates: {
-    canonical: 'http://anket.xn--efearabac-3pb.com',
+    canonical: BASE_URL,
   },
 };
 
@@ -27,7 +28,7 @@ const softwareSchema = {
     '@type': 'Person',
     name: 'Efe Arabacı',
     jobTitle: 'Full-Stack Developer & UI/UX Specialist',
-    url: 'http://anket.xn--efearabac-3pb.com',
+    url: BASE_URL,
   },
   description:
     'Modern, WebGL destekli editoryal arayüzlü müşteri keşif ve geri bildirim toplama platformu.',

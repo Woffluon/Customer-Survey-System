@@ -2,6 +2,7 @@
 
 import { RatingQuestion, Language } from '../../lib/types';
 import { cn } from '../../lib/utils';
+import { useTranslation } from '../../i18n/use-translation';
 
 interface RatingScaleProps {
   question: RatingQuestion;
@@ -18,6 +19,7 @@ export function RatingScale({
   error,
   language,
 }: RatingScaleProps) {
+  const { t } = useTranslation();
   const legendId = `legend-${question.id}`;
   const errorId = `error-${question.id}`;
   const labelText = question.label[language] || question.label['tr'];
@@ -40,7 +42,7 @@ export function RatingScale({
         {question.required && <span className="text-accent ml-1" aria-hidden="true">*</span>}
       </legend>
 
-      <div className="flex flex-wrap gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
         {numbers.map((num) => {
           const isSelected = value === num;
 
@@ -50,7 +52,7 @@ export function RatingScale({
               type="button"
               onClick={() => onChange(num)}
               className={cn(
-                'flex-1 min-w-[38px] h-11 rounded-xl border border-border bg-background font-mono font-medium text-sm transition-all focus:outline-none hover:border-foreground/40',
+                'w-full h-11 rounded-xl border border-border bg-background font-mono font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-foreground/40 hover:border-foreground/40',
                 isSelected
                   ? 'bg-foreground text-background border-foreground'
                   : 'text-foreground'
@@ -65,8 +67,8 @@ export function RatingScale({
       </div>
 
       <div className="flex justify-between text-xs text-muted font-mono px-1">
-        <span>{question.min} ({language === 'en' ? 'Lowest' : 'En Düşük'})</span>
-        <span>{question.max} ({language === 'en' ? 'Highest' : 'En Yüksek'})</span>
+        <span>{question.min} ({t('rating.lowest')})</span>
+        <span>{question.max} ({t('rating.highest')})</span>
       </div>
 
       {error && (

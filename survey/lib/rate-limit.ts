@@ -4,7 +4,7 @@ import { getEnv } from './env';
 
 function getHmacSecret(): string {
   const env = getEnv();
-  return env.TURNSTILE_SECRET_KEY || 'default_rate_limit_secret';
+  return env.RATE_LIMIT_SECRET || 'default_rate_limit_secret_for_dev_only';
 }
 
 function signToken(token: string, timestamp: number): string {
@@ -42,7 +42,10 @@ export function checkRateLimit(
 
   // Verify HMAC signature
   const expectedSig = signToken(surveyToken, timestamp);
-  if (crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
+  const sigBuf = Buffer.from(signature);
+  const expBuf = Buffer.from(expectedSig);
+
+  if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
     return { limited: true };
   }
 
@@ -63,5 +66,6 @@ export function setRateLimitCookie(
     httpOnly: true,
     sameSite: 'strict',
     path: '/',
+    secure: process.env.NODE_ENV === 'production',
   });
 }

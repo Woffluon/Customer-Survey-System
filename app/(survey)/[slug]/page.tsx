@@ -1,20 +1,20 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getSurvey } from '@/survey/lib/get-survey';
+import { getSurveyResult } from '@/survey/lib/get-survey';
 import { SurveyForm } from '@/survey/components/survey-form';
 import { JsonLd } from '@/survey/components/json-ld';
+import { InactiveSurvey } from '@/survey/components/inactive-survey';
+import { BASE_URL } from '@/survey/lib/config';
 
 interface PageProps {
-  params: Promise<{ slug: string }> | { slug: string };
+  params: Promise<{ slug: string }>;
 }
-
-const baseUrl = 'http://anket.xn--efearabac-3pb.com';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const survey = await getSurvey(resolvedParams.slug);
+  const result = await getSurveyResult(resolvedParams.slug);
 
-  if (!survey) {
+  if (result.status === 'not_found' || !result.survey) {
     return {
       title: 'Anket Bulunamadı | Efe Arabacı',
       description: 'İstenen anket bulunamadı veya süresi doldu.',
@@ -22,14 +22,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const canonicalUrl = `${baseUrl}/${survey.token}`;
+  const { survey } = result;
+  const canonicalUrl = `${BASE_URL}/${survey.token}`;
 
   return {
     title: survey.title,
     description:
       survey.description ||
       `${survey.title} - Efe Arabacı (Full-Stack Developer & UI/UX Specialist) müşteri geri bildirim ve keşif anketi.`,
-    authors: [{ name: 'Efe Arabacı', url: baseUrl }],
+    authors: [{ name: 'Efe Arabacı', url: BASE_URL }],
     creator: 'Efe Arabacı',
     robots: {
       index: true,
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: 'Efe Arabacı - Müşteri Anket Sistemi',
       images: [
         {
-          url: `${baseUrl}/og?title=${encodeURIComponent(survey.title)}`,
+          url: `${BASE_URL}/og?title=${encodeURIComponent(survey.title)}`,
           width: 1200,
           height: 630,
           alt: survey.title,
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${survey.title} | Efe Arabacı`,
       description: survey.description || `${survey.title} - Efe Arabacı`,
       creator: '@efearabaci',
-      images: [`${baseUrl}/og?title=${encodeURIComponent(survey.title)}`],
+      images: [`${BASE_URL}/og?title=${encodeURIComponent(survey.title)}`],
     },
     alternates: {
       canonical: canonicalUrl,
@@ -69,23 +70,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DirectSurveyPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const survey = await getSurvey(resolvedParams.slug);
+  const result = await getSurveyResult(resolvedParams.slug);
 
-  if (!survey) {
+  if (result.status === 'not_found') {
     notFound();
   }
+
+  if (result.status === 'inactive') {
+    return <InactiveSurvey messageKey="survey.inactive" />;
+  }
+
+  if (result.status === 'expired') {
+    return <InactiveSurvey messageKey="survey.expired" />;
+  }
+
+  const { survey } = result;
 
   const surveySchema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: survey.title,
     description: survey.description,
-    url: `${baseUrl}/${survey.token}`,
+    url: `${BASE_URL}/${survey.token}`,
     author: {
       '@type': 'Person',
       name: 'Efe Arabacı',
       jobTitle: 'Full-Stack Developer & UI/UX Specialist',
-      url: baseUrl,
+      url: BASE_URL,
     },
     mainEntity: {
       '@type': 'Quiz',

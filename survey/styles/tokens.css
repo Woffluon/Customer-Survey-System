@@ -6,6 +6,15 @@
   --muted: #525252;
   --surface: #ffffff;
   --border: rgba(26, 26, 26, 0.12);
+
+  --primary: var(--fg);
+  --card: var(--surface);
+  --secondary: rgba(26, 26, 26, 0.06);
+  --secondary-foreground: var(--fg);
+
+  --z-background: 0;
+  --z-content: 10;
+  --z-overlay: 50;
 }
 
 .dark {
@@ -16,5 +25,9 @@
   --muted: #b0b0b0;
   --surface: #141414;
   --border: rgba(240, 240, 240, 0.15);
-}
 
+  --primary: var(--fg);
+  --card: var(--surface);
+  --secondary: rgba(240, 240, 240, 0.08);
+  --secondary-foreground: var(--fg);
+}

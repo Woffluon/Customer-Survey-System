@@ -15,7 +15,7 @@ import React, {
 import { cn } from '../lib/utils';
 
 const PASSWORD_CHAR =
-  typeof navigator !== 'undefined' && navigator.userAgent.match(/firefox|fxios/i)
+  typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.userAgent.match(/firefox|fxios/i)
     ? '\u25CF'
     : '\u2022';
 
@@ -58,7 +58,11 @@ export function SmoothInput({
     prefersReducedMotion ? { stiffness: 10000, damping: 100, mass: 0.1 } : SPRING,
   );
 
+  const isTouchDevice =
+    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
   const syncMeasureSpan = () => {
+    if (typeof window === 'undefined') return;
     const input = inputRef.current;
     const span = measureRef.current;
     if (!input || !span) return;
@@ -68,6 +72,7 @@ export function SmoothInput({
     if (
       PASSWORD_CHAR === '\u2022' &&
       isPassword &&
+      typeof navigator !== 'undefined' &&
       !navigator.userAgent.match(/chrome|chromium|crios/i)
     ) {
       fontSize = `${parseFloat(fontSize) + 6.25}px`;
@@ -77,6 +82,7 @@ export function SmoothInput({
   };
 
   const measurePrefixWidth = (text: string): number | null => {
+    if (typeof window === 'undefined') return null;
     const input = inputRef.current;
     const span = measureRef.current;
     if (!input || !span) return null;
@@ -87,6 +93,7 @@ export function SmoothInput({
   };
 
   const scrollCaretIntoView = (target: HTMLInputElement, absW: number) => {
+    if (typeof window === 'undefined') return;
     const s = window.getComputedStyle(target);
     const pl = parseFloat(s.paddingLeft) || 0;
     const pr = parseFloat(s.paddingRight) || 0;
@@ -107,6 +114,7 @@ export function SmoothInput({
   };
 
   const updateCaretFromInput = (target: HTMLInputElement) => {
+    if (typeof window === 'undefined' || isTouchDevice) return;
     const ss = target.selectionStart ?? 0;
     const se = target.selectionEnd ?? 0;
     const hasSelection = ss !== se;
@@ -149,6 +157,7 @@ export function SmoothInput({
   }, [inputValue]);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || isTouchDevice) return;
     const input = inputRef.current;
     const container = containerRef.current;
     if (!input || !container) return;
@@ -164,8 +173,10 @@ export function SmoothInput({
     };
 
     document.addEventListener('selectionchange', onSelectionChange);
-    document.fonts.addEventListener('loadingdone', updateIfFocused);
-    void document.fonts.ready.then(updateIfFocused);
+    if (document.fonts) {
+      document.fonts.addEventListener('loadingdone', updateIfFocused);
+      void document.fonts.ready.then(updateIfFocused);
+    }
     input.addEventListener('scroll', updateIfFocused);
 
     const ro = new ResizeObserver(updateIfFocused);
@@ -173,18 +184,20 @@ export function SmoothInput({
 
     return () => {
       document.removeEventListener('selectionchange', onSelectionChange);
-      document.fonts.removeEventListener('loadingdone', updateIfFocused);
+      if (document.fonts) {
+        document.fonts.removeEventListener('loadingdone', updateIfFocused);
+      }
       input.removeEventListener('scroll', updateIfFocused);
       ro.disconnect();
     };
-  }, []);
+  }, [isTouchDevice]);
 
   return (
     <div className={cn('relative', wrapperClassName)}>
       <div
         ref={containerRef}
         className="relative grid grid-cols-1"
-        style={{ caretColor: 'transparent' }}
+        style={{ caretColor: isTouchDevice ? 'auto' : 'transparent' }}
       >
         <input
           {...props}
@@ -195,19 +208,23 @@ export function SmoothInput({
             'col-start-1 col-end-2 row-start-1 row-end-2',
             'w-full px-4 py-3 bg-background border border-border rounded-xl',
             'text-foreground text-sm placeholder:text-muted/60',
-            'focus:outline-none focus:border-foreground/40 transition-colors',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:border-foreground transition-colors',
             className,
           )}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (!isControlled) setInternalValue(e.target.value);
             onChange?.(e);
-            requestAnimationFrame(() => updateCaretRef.current(e.target));
+            if (!isTouchDevice) {
+              requestAnimationFrame(() => updateCaretRef.current(e.target));
+            }
           }}
-          onFocus={(e) => {
+          onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
             onFocus?.(e);
-            requestAnimationFrame(() => updateCaretRef.current(e.target));
+            if (!isTouchDevice) {
+              requestAnimationFrame(() => updateCaretRef.current(e.target));
+            }
           }}
-          onBlur={(e) => {
+          onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
             caretOpacityRef.current.set(0);
             onBlur?.(e);
           }}
@@ -217,18 +234,19 @@ export function SmoothInput({
           aria-hidden
           className="pointer-events-none invisible absolute top-0 left-0 whitespace-pre"
         />
-        <motion.div
-          className="bg-foreground pointer-events-none col-start-1 col-end-2 row-start-1 row-end-2 h-[0.9em] w-0.5 self-center"
-          style={{ x: springCaretX, opacity: caretOpacity }}
-        />
+        {!isTouchDevice && (
+          <motion.div
+            className="bg-foreground pointer-events-none col-start-1 col-end-2 row-start-1 row-end-2 h-[0.9em] w-0.5 self-center"
+            style={{ x: springCaretX, opacity: caretOpacity }}
+          />
+        )}
       </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// SmoothTextarea — multi-line (no caret animation — cursor is in paragraph flow)
-// uses a grow-to-content wrapper but keeps the same visual style
+// SmoothTextarea — multi-line
 // ---------------------------------------------------------------------------
 
 type SmoothTextareaProps = ComponentPropsWithoutRef<'textarea'> & {
@@ -255,9 +273,8 @@ export function SmoothTextarea({
         className={cn(
           'w-full px-4 py-3 bg-background border border-border rounded-xl',
           'text-foreground text-sm placeholder:text-muted/60',
-          'focus:outline-none focus:border-foreground/40 transition-colors',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:border-foreground transition-colors',
           'resize-y min-h-[120px]',
-          // custom caret color matching foreground
           'caret-foreground',
           className,
         )}

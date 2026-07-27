@@ -1,13 +1,12 @@
 import { MetadataRoute } from 'next';
 import fs from 'fs';
 import path from 'path';
-
-const baseUrl = 'http://anket.xn--efearabac-3pb.com';
+import { BASE_URL } from '@/survey/lib/config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}`,
+      url: `${BASE_URL}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
@@ -22,16 +21,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (file.endsWith('.json')) {
           const slug = file.replace('.json', '');
           routes.push({
-            url: `${baseUrl}/${slug}`,
+            url: `${BASE_URL}/${slug}`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.8,
-          });
-          routes.push({
-            url: `${baseUrl}/survey/${slug}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.7,
           });
         }
       }

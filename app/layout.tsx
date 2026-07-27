@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { BASE_URL } from '@/survey/lib/config';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -14,10 +15,15 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
-const baseUrl = 'http://anket.xn--efearabac-3pb.com';
+function safeJsonStringify(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
 
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
+  metadataBase: new URL(BASE_URL),
   title: {
     default: 'Efe Arabacı | Müşteri Anket & Geri Bildirim Sistemi',
     template: '%s | Efe Arabacı',
@@ -36,7 +42,7 @@ export const metadata: Metadata = {
     'Project Onboarding',
     'Yazılım Geliştirici',
   ],
-  authors: [{ name: 'Efe Arabacı', url: baseUrl }],
+  authors: [{ name: 'Efe Arabacı', url: BASE_URL }],
   creator: 'Efe Arabacı',
   publisher: 'Efe Arabacı',
   formatDetection: {
@@ -59,14 +65,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'tr_TR',
     alternateLocale: 'en_US',
-    url: baseUrl,
+    url: BASE_URL,
     siteName: 'Efe Arabacı - Müşteri Anket Sistemi',
     title: 'Efe Arabacı | Müşteri Anket & Geri Bildirim Sistemi',
     description:
       'Full-Stack Developer & UI/UX Specialist Efe Arabacı için özel müşteri onboarding ve keşif anket platformu.',
     images: [
       {
-        url: `${baseUrl}/og`,
+        url: `${BASE_URL}/og`,
         width: 1200,
         height: 630,
         alt: 'Efe Arabacı Müşteri Anket Sistemi',
@@ -79,13 +85,13 @@ export const metadata: Metadata = {
     description:
       'Full-Stack Developer & UI/UX Specialist Efe Arabacı için özel müşteri onboarding ve keşif anket platformu.',
     creator: '@efearabaci',
-    images: [`${baseUrl}/og`],
+    images: [`${BASE_URL}/og`],
   },
   alternates: {
-    canonical: baseUrl,
+    canonical: BASE_URL,
     languages: {
-      'tr-TR': `${baseUrl}`,
-      'en-US': `${baseUrl}?lang=en`,
+      'tr-TR': `${BASE_URL}`,
+      'en-US': `${BASE_URL}?lang=en`,
     },
   },
 };
@@ -95,7 +101,7 @@ const personSchema = {
   '@type': 'Person',
   name: 'Efe Arabacı',
   jobTitle: 'Full-Stack Developer & UI/UX Specialist',
-  url: baseUrl,
+  url: BASE_URL,
   sameAs: [
     'https://github.com/woffluon',
     'https://www.linkedin.com/in/efearabacı',
@@ -115,7 +121,7 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Efe Arabacı - Müşteri Anket Sistemi',
-  url: baseUrl,
+  url: BASE_URL,
   author: {
     '@type': 'Person',
     name: 'Efe Arabacı',
@@ -143,6 +149,10 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.add('dark');
                   }
+                  var lang = localStorage.getItem('survey_lang');
+                  if (lang === 'en' || lang === 'tr') {
+                    document.documentElement.setAttribute('lang', lang === 'tr' ? 'tr-TR' : 'en-US');
+                  }
                 } catch (e) {}
               })();
             `,
@@ -151,12 +161,12 @@ export default function RootLayout({
         <script
           key="person-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonStringify(personSchema) }}
         />
         <script
           key="website-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonStringify(websiteSchema) }}
         />
       </head>
 
