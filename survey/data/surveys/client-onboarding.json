@@ -1,22 +1,91 @@
 {
   "token": "client-onboarding",
-  "title": "Proje Başlangıç & Keşif Anketi",
-  "description": "Projemizin hedeflerini, vizyonunu, iletişim tercihlerini ve başarı kriterlerini netleştirmek için hazırladığımız keşif anketi.",
+  "title": "Efe Arabacı | Proje Başlangıç & Keşif Anketi",
+  "description": "Projeyi doğru anlamam, öncelikleri netleştirmem ve geliştirme sürecini beklentilerinize göre planlamam için hazırlanmış kısa keşif anketi.",
   "defaultLanguage": "tr",
   "active": true,
   "expiresAt": null,
   "respondent": {
     "collectName": true,
     "collectEmail": true,
-    "collectCompany": true
+    "collectCompany": false
   },
   "questions": [
     {
-      "id": "business_goals",
+      "id": "business_name",
+      "type": "short_text",
+      "label": {
+        "tr": "Şirketinizin veya markanızın adı nedir? Bireysel çalışıyorsanız “Bireysel” yazabilirsiniz.",
+        "en": "What is your company or brand name? If you are working as an individual, you can enter “Individual”."
+      },
+      "required": true
+    },
+    {
+      "id": "project_services",
+      "type": "multi_choice",
+      "label": {
+        "tr": "Bu projede hangi hizmetlere ihtiyacınız var?",
+        "en": "Which services do you need for this project?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "website",
+          "label": {
+            "tr": "Web sitesi",
+            "en": "Website"
+          }
+        },
+        {
+          "id": "web_app",
+          "label": {
+            "tr": "Web uygulaması",
+            "en": "Web application"
+          }
+        },
+        {
+          "id": "mobile_app",
+          "label": {
+            "tr": "Mobil uygulama",
+            "en": "Mobile application"
+          }
+        },
+        {
+          "id": "ui_ux",
+          "label": {
+            "tr": "UI/UX tasarımı",
+            "en": "UI/UX design"
+          }
+        },
+        {
+          "id": "seo",
+          "label": {
+            "tr": "SEO çalışması",
+            "en": "SEO"
+          }
+        },
+        {
+          "id": "performance",
+          "label": {
+            "tr": "Hız ve performans iyileştirmesi",
+            "en": "Speed and performance optimization"
+          }
+        },
+        {
+          "id": "automation",
+          "label": {
+            "tr": "Otomasyon",
+            "en": "Automation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "project_summary",
       "type": "long_text",
       "label": {
-        "tr": "Bu projenin ana iş hedefi ve çözmek istediği temel problem nedir?",
-        "en": "What is the primary business goal and key problem this project aims to solve?"
+        "tr": "Projeyi kendi cümlelerinizle kısaca anlatır mısınız? Ne yapmak istiyorsunuz ve sonunda nasıl bir sonuç ortaya çıkmasını bekliyorsunuz?",
+        "en": "Could you briefly describe the project in your own words? What do you want to build and what outcome do you expect?"
       },
       "required": true
     },
@@ -24,65 +93,347 @@
       "id": "target_audience",
       "type": "short_text",
       "label": {
-        "tr": "Hedef kitleniz veya kullanıcı profiliniz kimlerden oluşuyor?",
-        "en": "Who is your target audience or primary user profile?"
+        "tr": "Bu ürün veya hizmeti esas olarak kimler kullanacak?",
+        "en": "Who will primarily use this product or service?"
       },
       "required": true
     },
     {
-      "id": "key_deliverables",
-      "type": "multi_choice",
+      "id": "feature_priorities",
+      "type": "long_text",
       "label": {
-        "tr": "Projede öncelikli olarak odaklanılmasını istediğiniz ana alanlar nelerdir?",
-        "en": "What are the key areas you want prioritized in this project?"
+        "tr": "İstediğiniz özellikleri iki gruba ayırabilir misiniz: mutlaka olması gerekenler ve olsa iyi olur dedikleriniz?",
+        "en": "Can you split the features you want into two groups: must-have features and nice-to-have features?"
+      },
+      "required": true
+    },
+    {
+      "id": "budget_range",
+      "type": "single_choice",
+      "label": {
+        "tr": "Proje için ayırmayı düşündüğünüz yaklaşık bütçe hangi aralıkta?",
+        "en": "What approximate budget range are you considering for the project?"
       },
       "required": true,
       "options": [
         {
-          "id": "web_development",
+          "id": "under_20000",
           "label": {
-            "tr": "Özel Frontend / Web Geliştirme",
-            "en": "Custom Frontend / Web Development"
+            "tr": "20.000 TL altı",
+            "en": "Under TRY 20,000"
           }
         },
         {
-          "id": "ui_ux_design",
+          "id": "20000_50000",
           "label": {
-            "tr": "UI/UX Tasarımı ve Tasarım Sistemi",
-            "en": "UI/UX Design & Design System"
+            "tr": "20.000 – 50.000 TL",
+            "en": "TRY 20,000–50,000"
           }
         },
         {
-          "id": "performance_seo",
+          "id": "50000_100000",
           "label": {
-            "tr": "Yüksek Performans & SEO Optimizasyonu",
-            "en": "High Performance & SEO Optimization"
+            "tr": "50.000 – 100.000 TL",
+            "en": "TRY 50,000–100,000"
           }
         },
         {
-          "id": "creative_animations",
+          "id": "100000_200000",
           "label": {
-            "tr": "Yaratıcı Etkileşimler & Animasyonlar",
-            "en": "Creative Interactions & Animations"
+            "tr": "100.000 – 200.000 TL",
+            "en": "TRY 100,000–200,000"
+          }
+        },
+        {
+          "id": "over_200000",
+          "label": {
+            "tr": "200.000 TL üzeri",
+            "en": "Over TRY 200,000"
+          }
+        },
+        {
+          "id": "not_decided",
+          "label": {
+            "tr": "Henüz belirlenmedi",
+            "en": "Not decided yet"
           }
         }
       ]
     },
     {
-      "id": "brand_keywords",
+      "id": "target_date",
       "type": "short_text",
       "label": {
-        "tr": "Markanızı ve projenin hissettirmesini istediğiniz duygu/tarzı tanımlayan 3 anahtar kelime nedir?",
-        "en": "What are 3 keywords describing your brand tone and desired experience?"
+        "tr": "Projenin tamamlanmasını veya yayına alınmasını istediğiniz tarih nedir? Kesin bir tarih yoksa yaklaşık bir dönem yazabilirsiniz.",
+        "en": "When would you like the project to be completed or launched? If there is no fixed date, an approximate period is fine."
       },
       "required": true
     },
     {
-      "id": "benchmark_links",
+      "id": "urgency",
+      "type": "single_choice",
+      "label": {
+        "tr": "Bu tarih sizin için ne kadar esnek?",
+        "en": "How flexible is that timeline?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "flexible",
+          "label": {
+            "tr": "Oldukça esnek",
+            "en": "Very flexible"
+          }
+        },
+        {
+          "id": "somewhat_flexible",
+          "label": {
+            "tr": "Bir miktar esnek",
+            "en": "Somewhat flexible"
+          }
+        },
+        {
+          "id": "important_date",
+          "label": {
+            "tr": "Belirttiğim tarihe yetişmesi önemli",
+            "en": "Meeting the stated date is important"
+          }
+        },
+        {
+          "id": "urgent",
+          "label": {
+            "tr": "Mümkün olan en kısa sürede tamamlanmalı",
+            "en": "It should be completed as soon as possible"
+          }
+        }
+      ]
+    },
+    {
+      "id": "project_status",
+      "type": "single_choice",
+      "label": {
+        "tr": "Bu çalışma sıfırdan mı yapılacak, yoksa mevcut bir ürün/sistem üzerinde mi çalışılacak?",
+        "en": "Is this being built from scratch, or will we work on an existing product/system?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "new",
+          "label": {
+            "tr": "Sıfırdan yapılacak",
+            "en": "Built from scratch"
+          }
+        },
+        {
+          "id": "existing",
+          "label": {
+            "tr": "Mevcut bir ürün/sistem üzerinde çalışılacak",
+            "en": "Work on an existing product/system"
+          }
+        }
+      ]
+    },
+    {
+      "id": "existing_system_details",
       "type": "long_text",
       "label": {
-        "tr": "Beğendiğiniz, ilham aldığınız veya rakip olarak gördüğünüz web sitesi / ürün bağlantıları",
-        "en": "Website / product links you admire, draw inspiration from, or view as competitors"
+        "tr": "Mevcut bir ürün/sistem varsa bildiğiniz kadarını paylaşın: kullanılan altyapı, domain/hosting, kaynak kodun bulunduğu yer ve hangi erişimlerin mevcut olduğu. Lütfen şifre veya gizli anahtar yazmayın. Sıfırdan bir projeyse boş bırakabilirsiniz.",
+        "en": "If there is an existing product/system, share what you know about its technology, domain/hosting, source code location, and available access. Do not include passwords or secret keys. Leave blank for a new project."
+      },
+      "required": false
+    },
+    {
+      "id": "brand_and_design",
+      "type": "long_text",
+      "label": {
+        "tr": "Tasarım içeren bir çalışma varsa mevcut logo, renk, yazı tipi, marka rehberi veya hazır tasarımları ve istediğiniz genel tarzı kısaca anlatın. Beğendiğiniz ya da kesinlikle benzemesini istemediğiniz örnek bağlantıları da ekleyebilirsiniz.",
+        "en": "If the project includes design work, briefly describe any existing logo, colors, fonts, brand guidelines or designs, and the overall style you want. You may also include links you like or definitely do not want to resemble."
+      },
+      "required": false
+    },
+    {
+      "id": "content_and_languages",
+      "type": "long_text",
+      "label": {
+        "tr": "Metin, görsel ve diğer içerikleri kim hazırlayacak? Projenin birden fazla dilde olması gerekiyorsa hangi dilleri desteklemesi gerektiğini de belirtin.",
+        "en": "Who will provide the text, images, and other content? If the project needs multiple languages, also specify which languages should be supported."
+      },
+      "required": false
+    },
+    {
+      "id": "product_features",
+      "type": "multi_choice",
+      "label": {
+        "tr": "Projede aşağıdaki özelliklerden hangilerine ihtiyaç var? Uygun değilse son seçeneği işaretleyebilirsiniz.",
+        "en": "Which of the following features does the project need? Choose the last option if none apply."
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "accounts",
+          "label": {
+            "tr": "Kullanıcı hesabı / giriş sistemi",
+            "en": "User accounts / sign-in"
+          }
+        },
+        {
+          "id": "roles",
+          "label": {
+            "tr": "Farklı kullanıcı rolleri ve yetkiler",
+            "en": "Different user roles and permissions"
+          }
+        },
+        {
+          "id": "admin_panel",
+          "label": {
+            "tr": "Yönetim paneli",
+            "en": "Admin panel"
+          }
+        },
+        {
+          "id": "payments",
+          "label": {
+            "tr": "E-ticaret veya online ödeme",
+            "en": "E-commerce or online payments"
+          }
+        },
+        {
+          "id": "content_management",
+          "label": {
+            "tr": "İçerikleri sonradan yönetebilme",
+            "en": "Ability to manage content later"
+          }
+        },
+        {
+          "id": "multilingual",
+          "label": {
+            "tr": "Birden fazla dil",
+            "en": "Multiple languages"
+          }
+        },
+        {
+          "id": "none",
+          "label": {
+            "tr": "Bunların hiçbiri gerekmiyor / uygun değil",
+            "en": "None of these are needed / applicable"
+          }
+        }
+      ]
+    },
+    {
+      "id": "seo_performance",
+      "type": "multi_choice",
+      "label": {
+        "tr": "SEO ve hız/performans tarafında öncelikleriniz hangileri?",
+        "en": "What are your priorities regarding SEO and speed/performance?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "search_visibility",
+          "label": {
+            "tr": "Google'da daha görünür olmak",
+            "en": "Improve visibility on Google"
+          }
+        },
+        {
+          "id": "technical_seo",
+          "label": {
+            "tr": "Teknik SEO sorunlarını düzeltmek",
+            "en": "Fix technical SEO issues"
+          }
+        },
+        {
+          "id": "fast_loading",
+          "label": {
+            "tr": "Sayfaların/ekranların hızlı açılması",
+            "en": "Fast page/screen loading"
+          }
+        },
+        {
+          "id": "smooth_experience",
+          "label": {
+            "tr": "Akıcı ve takılmayan bir kullanım deneyimi",
+            "en": "A smooth and responsive experience"
+          }
+        },
+        {
+          "id": "core_priority",
+          "label": {
+            "tr": "SEO veya performans projenin ana önceliklerinden biri",
+            "en": "SEO or performance is one of the project's main priorities"
+          }
+        },
+        {
+          "id": "not_priority",
+          "label": {
+            "tr": "Bu projede özel bir SEO/performans beklentim yok",
+            "en": "No special SEO/performance requirement for this project"
+          }
+        }
+      ]
+    },
+    {
+      "id": "service_specific_details",
+      "type": "long_text",
+      "label": {
+        "tr": "Seçtiğiniz hizmetlerle ilgili özellikle belirtmem gereken başka bir detay var mı? Örneğin mobilde hedef platformlar, otomasyonda bugün elle yapılan süreç, SEO'da hedeflenen alanlar veya web uygulamasında özel iş akışları.",
+        "en": "Is there any service-specific detail I should know? For example: target mobile platforms, the manual process to automate, SEO priorities, or special workflows in a web application."
+      },
+      "required": false
+    },
+    {
+      "id": "data_sensitivity",
+      "type": "multi_choice",
+      "label": {
+        "tr": "Projede aşağıdaki veri türlerinden hangileri işlenecek?",
+        "en": "Which types of data will the project handle?"
+      },
+      "required": true,
+      "options": [
+        {
+          "id": "basic_contact",
+          "label": {
+            "tr": "Ad, e-posta, telefon gibi temel iletişim bilgileri",
+            "en": "Basic contact data such as name, email, or phone"
+          }
+        },
+        {
+          "id": "account_data",
+          "label": {
+            "tr": "Kullanıcı hesabı ve profil bilgileri",
+            "en": "User account and profile data"
+          }
+        },
+        {
+          "id": "payment_data",
+          "label": {
+            "tr": "Ödeme veya faturalama ile ilgili veriler",
+            "en": "Payment or billing-related data"
+          }
+        },
+        {
+          "id": "sensitive_other",
+          "label": {
+            "tr": "Bunların dışında hassas/özel veriler",
+            "en": "Other sensitive/private data"
+          }
+        },
+        {
+          "id": "none",
+          "label": {
+            "tr": "Kişisel veya hassas veri işlenmeyecek",
+            "en": "No personal or sensitive data"
+          }
+        }
+      ]
+    },
+    {
+      "id": "biggest_concern",
+      "type": "long_text",
+      "label": {
+        "tr": "Bu projeyle ilgili sizi en çok endişelendiren veya kesinlikle yaşamak istemediğiniz bir durum var mı?",
+        "en": "Is there anything about this project that concerns you most or that you definitely want to avoid?"
       },
       "required": false
     },
@@ -90,8 +441,8 @@
       "id": "communication_channel",
       "type": "single_choice",
       "label": {
-        "tr": "Süreç boyunca tercih ettiğiniz birincil iletişim kanalı hangisidir?",
-        "en": "What is your preferred primary communication channel during the process?"
+        "tr": "Proje boyunca sizin için en rahat ana iletişim kanalı hangisi?",
+        "en": "Which primary communication channel is most convenient for you during the project?"
       },
       "required": true,
       "options": [
@@ -103,13 +454,6 @@
           }
         },
         {
-          "id": "slack_discord",
-          "label": {
-            "tr": "Slack / Discord",
-            "en": "Slack / Discord"
-          }
-        },
-        {
           "id": "whatsapp_phone",
           "label": {
             "tr": "WhatsApp / Telefon",
@@ -117,31 +461,20 @@
           }
         },
         {
-          "id": "weekly_calls",
+          "id": "slack_discord",
           "label": {
-            "tr": "Haftalık Online Toplantılar",
-            "en": "Weekly Online Calls"
+            "tr": "Slack / Discord",
+            "en": "Slack / Discord"
+          }
+        },
+        {
+          "id": "online_calls",
+          "label": {
+            "tr": "Online görüşmeler",
+            "en": "Online calls"
           }
         }
       ]
-    },
-    {
-      "id": "success_criteria",
-      "type": "long_text",
-      "label": {
-        "tr": "Bu projenin sizin için tam bir başarı sayılması için en kritik kriter nedir?",
-        "en": "What is the single most critical criterion for this project to be a complete success?"
-      },
-      "required": true
-    },
-    {
-      "id": "additional_notes",
-      "type": "long_text",
-      "label": {
-        "tr": "Başlamadan önce iletmek istediğiniz ek bir not, doküman veya özel gereksinim var mı?",
-        "en": "Is there any additional note, document, or specific requirement before we start?"
-      },
-      "required": false
     }
   ]
 }
