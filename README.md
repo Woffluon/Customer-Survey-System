@@ -1,6 +1,6 @@
 # Isolated Client Survey System
 
-![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=flat-square&logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-3.23-3E67B1?style=flat-square&logo=zod&logoColor=white)
@@ -51,7 +51,8 @@ flowchart TD
     ZodCompiler --> FormValidator
     FormValidator -- Invalid --> Reject400["400 Field Errors"]
     FormValidator -- Valid --> Mailer
-    Mailer --> AdminEmail["Admin Inbox (HTML Notification)"]
+    Mailer --> AdminEmail["Admin Inbox (HTML + JSON attachment)"]
+    Mailer --> ParticipantEmail["Participant Inbox (Confirmation)"]
 ```
 
 ---
@@ -77,8 +78,13 @@ sequenceDiagram
     alt Validation Failed
         API-->>Client: 400 Bad Request + Field Error Map
     else Validation Succeeded
-        API->>Resend: sendNotificationEmail(validatedData)
-        Resend-->>API: 200 OK (Message ID)
+        par Admin notification
+            API->>Resend: Send HTML notification + JSON export
+            Resend-->>API: Admin message accepted
+        and Participant confirmation
+            API->>Resend: Send localized confirmation
+            Resend-->>API: Participant message accepted
+        end
         API-->>Client: 200 Success + Redirect URL
     end
 ```
@@ -101,8 +107,11 @@ Surveys are written as plain JSON definitions. The server reads the file on dema
 ### 3. Theme-Aware WebGL Shader
 Background rendering uses custom satin silk shaders via OGL. A MutationObserver detects document root class changes, switching shader color palettes dynamically between light mode (`#ECEAE4`) and dark mode (`#36323B`).
 
-### 4. Zero Database Requirement
-Responses compile into styled HTML emails delivered via Resend. In development mode without API keys, payloads output directly to `stdout`.
+### 4. Dual Email Delivery and JSON Export
+Responses compile into styled HTML emails delivered via Resend. The administrator notification also includes one downloadable UTF-8 JSON attachment (`survey-response/v1`) with localized question labels, raw answer values, and readable display values. The participant receives a separate localized receipt without answers, IP information, or an attachment. The submission is considered successful only after Resend accepts both messages.
+
+### 5. Zero Database Requirement
+The application does not persist survey responses or email attachments. In development mode without API keys, both messages are simulated with generic logs and no participant address or response payload is printed.
 
 ---
 
@@ -110,7 +119,7 @@ Responses compile into styled HTML emails delivered via Resend. In development m
 
 | Layer | Library / Engine | Technical Role |
 | :--- | :--- | :--- |
-| **Core** | Next.js 14.2 (App Router) | React Server Components, Server Actions |
+| **Core** | Next.js 15.5 (App Router) | React Server Components, Server Actions |
 | **Language** | TypeScript 5.8 | Strict type assertions across JSON & runtime APIs |
 | **Styling** | Tailwind CSS v4 | CSS variable design tokens and utility rules |
 | **Graphics** | OGL 1.0 | Low-overhead WebGL shader pipeline |
@@ -153,7 +162,7 @@ CPU Load (1 vCPU Core):
 │   ├── data/surveys/              # JSON survey configs (onboarding, completion)
 │   ├── components/                # UI components, question types, WebGL canvas
 │   ├── i18n/                      # Turkish / English translation dictionaries
-│   ├── lib/                       # Zod schema builder, rate limiter, mailer
+│   ├── lib/                       # Zod schema builder, rate limiter, mailer, JSON export
 │   └── styles/                    # Tokens and color definitions
 └── README.md
 ```
