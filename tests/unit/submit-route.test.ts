@@ -42,6 +42,7 @@ function request(body: Record<string, unknown>) {
 describe('POST /api/survey/submit', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    survey.respondent.collectCompany = false;
     mocks.verifyTurnstile.mockResolvedValue({ success: true, errorCodes: [] });
     mocks.checkRateLimit.mockReturnValue({ limited: false });
     mocks.getSurvey.mockResolvedValue(survey);
@@ -88,5 +89,65 @@ describe('POST /api/survey/submit', () => {
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({ success: false, error: 'email_failed' });
     expect(mocks.setRateLimitCookie).not.toHaveBeenCalled();
+  });
+
+  it('returns validation errors before sending either email', async () => {
+    mocks.buildSurveySchema.mockReturnValue({
+      safeParse: vi.fn(() => ({
+        success: false,
+        error: { issues: [{ path: ['respondent_email'], message: 'invalid_email' }] },
+      })),
+    });
+
+    const response = await POST(request({
+      surveySlug: 'sample-survey',
+      turnstileToken: 'test_token',
+      respondent: { name: 'Alex Smith', email: 'not-an-email' },
+      answers: {},
+    }));
+
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({
+      error: 'validation_failed',
+      fieldErrors: { respondent_email: 'invalid_email' },
+    });
+    expect(mocks.sendSurveyEmails).not.toHaveBeenCalled();
+  });
+
+  it('fails safely if a survey that collects no email reaches dispatch', async () => {
+    mocks.buildSurveySchema.mockReturnValue({
+      safeParse: vi.fn(() => ({ success: true, data: { respondent_name: 'Alex Smith' } })),
+    });
+
+    const response = await POST(request({
+      surveySlug: 'sample-survey',
+      turnstileToken: 'test_token',
+      respondent: { name: 'Alex Smith' },
+      answers: {},
+    }));
+
+    expect(response.status).toBe(500);
+    expect(mocks.sendSurveyEmails).not.toHaveBeenCalled();
+  });
+
+  it('stops requests that fail Turnstile verification', async () => {
+    mocks.verifyTurnstile.mockResolvedValue({ success: false, errorCodes: ['invalid-input-response'] });
+
+    const response = await POST(request({ surveySlug: 'sample-survey' }));
+
+    expect(response.status).toBe(403);
+    expect(mocks.getSurvey).not.toHaveBeenCalled();
+  });
+
+  it('returns a silent success for honeypot submissions', async () => {
+    const response = await POST(request({
+      surveySlug: 'sample-survey',
+      turnstileToken: 'test_token',
+      honeypot: 'https://spam.example',
+    }));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ success: true, redirect: '/thank-you' });
+    expect(mocks.sendSurveyEmails).not.toHaveBeenCalled();
   });
 });

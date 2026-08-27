@@ -31,9 +31,11 @@ const survey: SurveyConfig = {
 describe('sendSurveyEmails', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.Resend.mockImplementation(() => ({
+    mocks.Resend.mockImplementation(function ResendMock() {
+      return {
       emails: { send: mocks.resendSend },
-    }));
+      };
+    });
     mocks.getEnv.mockReturnValue({
       RESEND_API_KEY: 're_live_test_key',
       RESEND_FROM_EMAIL: 'onboarding@resend.dev',
@@ -105,5 +107,23 @@ describe('sendSurveyEmails', () => {
     expect(result).toEqual({ success: true });
     expect(logSpy.mock.calls.flat().join(' ')).not.toContain('participant@example.com');
     logSpy.mockRestore();
+  });
+
+  it('returns a generic failure when rendering or delivery throws', async () => {
+    mocks.resendSend.mockRejectedValue(new Error('connection lost'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const result = await sendSurveyEmails({
+      surveyConfig: survey,
+      answers: {},
+      respondent: { name: 'Ayşe Yılmaz' },
+      recipientEmail: 'participant@example.com',
+      language: 'tr',
+      submittedAt: new Date('2026-08-27T11:30:00.000Z'),
+      ipAddress: '127.0.0.1',
+    });
+
+    expect(result).toEqual({ success: false, error: 'email_failed' });
+    errorSpy.mockRestore();
   });
 });

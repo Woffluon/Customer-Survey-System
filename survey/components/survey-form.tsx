@@ -4,8 +4,9 @@ import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SurveyConfig } from '../lib/types';
+import { AnswerValue, SurveyConfig } from '../lib/types';
 import { buildSurveySchema } from '../lib/survey-schema';
+import { createSurveySubmitPayload } from '../lib/create-submit-payload';
 import { useTranslation } from '../i18n/use-translation';
 import { TurnstileWidget } from './turnstile-widget';
 import { ProgressBar } from './progress-bar';
@@ -37,7 +38,7 @@ export function SurveyForm({ config }: SurveyFormProps) {
   const totalDisplaySteps = allQuestions.length + (hasRespondentFields ? 1 : 0);
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, unknown>>({});
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [respondent, setRespondent] = useState<{ name?: string; email?: string; company?: string }>({});
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export function SurveyForm({ config }: SurveyFormProps) {
   const clearError = (key: string) =>
     setErrors((prev) => { const n = { ...prev }; delete n[key]; return n; });
 
-  const handleAnswerChange = (questionId: string, value: unknown) => {
+  const handleAnswerChange = (questionId: string, value: AnswerValue) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
     clearError(questionId);
   };
@@ -63,7 +64,7 @@ export function SurveyForm({ config }: SurveyFormProps) {
   };
 
   const validateCurrentStep = (): boolean => {
-    const dataToValidate: Record<string, unknown> = { ...answers };
+    const dataToValidate: Record<string, AnswerValue> = { ...answers };
     if (isRespondentStep) {
       if (config.respondent.collectName) dataToValidate['respondent_name'] = respondent.name || '';
       if (config.respondent.collectEmail) dataToValidate['respondent_email'] = respondent.email || '';
@@ -100,7 +101,7 @@ export function SurveyForm({ config }: SurveyFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGlobalError(null);
-    const dataToValidate: Record<string, unknown> = { ...answers };
+    const dataToValidate: Record<string, AnswerValue> = { ...answers };
     if (config.respondent.collectName) dataToValidate['respondent_name'] = respondent.name || '';
     if (config.respondent.collectEmail) dataToValidate['respondent_email'] = respondent.email || '';
     if (config.respondent.collectCompany) dataToValidate['respondent_company'] = respondent.company || '';
@@ -122,14 +123,14 @@ export function SurveyForm({ config }: SurveyFormProps) {
       const res = await fetch('/api/survey/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: JSON.stringify(createSurveySubmitPayload({
           surveyToken: config.token,
-          surveySlug: config.token,
           turnstileToken: turnstileToken || 'dummy_token',
           honeypot,
           respondent,
           answers,
-        }),
+          language,
+        })),
       });
       const responseData = await res.json();
       if (!res.ok || !responseData.success) {

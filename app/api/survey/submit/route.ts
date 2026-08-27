@@ -3,8 +3,9 @@ import { verifyTurnstile } from '@/survey/lib/verify-turnstile';
 import { checkRateLimit, setRateLimitCookie } from '@/survey/lib/rate-limit';
 import { getSurvey } from '@/survey/lib/get-survey';
 import { buildSurveySchema } from '@/survey/lib/survey-schema';
-import { sendNotificationEmail } from '@/survey/lib/send-notification-email';
+import { sendSurveyEmails } from '@/survey/lib/send-notification-email';
 import { ApiResponse, AnswerValue } from '@/survey/lib/types';
+import { z } from 'zod';
 
 interface SubmitRequestBody {
   surveyToken?: string;
@@ -17,7 +18,10 @@ interface SubmitRequestBody {
     company?: string;
   };
   answers?: Record<string, AnswerValue>;
+  language?: unknown;
 }
+
+const languageSchema = z.enum(['tr', 'en']);
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   let body: unknown;
@@ -111,11 +115,33 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     );
   }
 
+  const recipientEmail = validation.data.respondent_email;
+  if (typeof recipientEmail !== 'string') {
+    return NextResponse.json(
+      { success: false, error: 'email_failed' },
+      { status: 500 }
+    );
+  }
+
+  const normalizedRespondent = {
+    name: typeof validation.data.respondent_name === 'string'
+      ? validation.data.respondent_name
+      : undefined,
+    email: recipientEmail,
+    company: typeof validation.data.respondent_company === 'string'
+      ? validation.data.respondent_company
+      : undefined,
+  };
+  const parsedLanguage = languageSchema.safeParse(parsedBody.language);
+  const language = parsedLanguage.success ? parsedLanguage.data : survey.defaultLanguage;
+
   // 7. Dispatch Email
-  const emailResult = await sendNotificationEmail({
+  const emailResult = await sendSurveyEmails({
     surveyConfig: survey,
     answers: validation.data as Record<string, AnswerValue>,
-    respondent,
+    respondent: normalizedRespondent,
+    recipientEmail,
+    language,
     submittedAt: new Date(),
     ipAddress: ip,
   });

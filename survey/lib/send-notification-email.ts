@@ -1,7 +1,8 @@
 import { render } from '@react-email/components';
 import { Resend } from 'resend';
-import { SurveyConfig, AnswerValue } from './types';
+import { SurveyConfig, AnswerValue, Language } from './types';
 import { SurveyEmailTemplate } from './email-template';
+import { SurveyConfirmationEmailTemplate } from './survey-confirmation-email-template';
 import { getEnv } from './env';
 
 interface SendEmailParams {
@@ -12,63 +13,86 @@ interface SendEmailParams {
     email?: string;
     company?: string;
   };
+  recipientEmail: string;
+  language: Language;
   submittedAt: Date;
   ipAddress: string;
 }
 
-export async function sendNotificationEmail({
+export async function sendSurveyEmails({
   surveyConfig,
   answers,
   respondent,
+  recipientEmail,
+  language,
   submittedAt,
   ipAddress,
 }: SendEmailParams): Promise<{ success: boolean; error?: string }> {
   const env = getEnv();
 
-  const formattedDate = submittedAt.toLocaleString('tr-TR', {
+  const notificationDate = submittedAt.toLocaleString('tr-TR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+  const confirmationDate = submittedAt.toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US', {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
 
+  const notificationSubject = `Yeni Anket Yanıtı: ${surveyConfig.title}`;
+  const confirmationSubject = language === 'tr'
+    ? `Yanıtınız alındı: ${surveyConfig.title}`
+    : `Your response has been received: ${surveyConfig.title}`;
+
   try {
-    const html = await render(
-      SurveyEmailTemplate({
+    const [notificationHtml, confirmationHtml] = await Promise.all([
+      render(SurveyEmailTemplate({
         surveyConfig,
         answers,
         respondent,
-        submittedAt: formattedDate,
+        submittedAt: notificationDate,
         ipAddress,
-      })
-    );
+      })),
+      render(SurveyConfirmationEmailTemplate({
+        surveyTitle: surveyConfig.title,
+        respondentName: respondent?.name,
+        submittedAt: confirmationDate,
+        language,
+      })),
+    ]);
 
-    // Development / Mock mode handling
     if (!env.RESEND_API_KEY || env.RESEND_API_KEY === 're_mock_key') {
       console.log('--- MOCK EMAIL DISPATCH ---');
-      console.log(`To: ${env.NOTIFICATION_TO_EMAIL}`);
-      console.log(`Subject: Yeni Anket Yanıtı — ${surveyConfig.title}`);
-      console.log(`Submitted At: ${formattedDate}`);
+      console.log('Admin notification and participant confirmation were prepared.');
       console.log('---------------------------');
       return { success: true };
     }
 
     const resend = new Resend(env.RESEND_API_KEY);
 
-    const { error } = await resend.emails.send({
-      from: env.RESEND_FROM_EMAIL,
-      to: [env.NOTIFICATION_TO_EMAIL],
-      subject: `Yeni Anket Yanıtı — ${surveyConfig.title}`,
-      html,
-    });
+    const [notificationResult, confirmationResult] = await Promise.all([
+      resend.emails.send({
+        from: env.RESEND_FROM_EMAIL,
+        to: [env.NOTIFICATION_TO_EMAIL],
+        subject: notificationSubject,
+        html: notificationHtml,
+      }),
+      resend.emails.send({
+        from: env.RESEND_FROM_EMAIL,
+        to: [recipientEmail],
+        subject: confirmationSubject,
+        html: confirmationHtml,
+      }),
+    ]);
 
-    if (error) {
-      console.error('Resend API error:', error);
-      return { success: false, error: error.message };
+    if (notificationResult.error || confirmationResult.error) {
+      console.error('Survey email dispatch was rejected by the provider.');
+      return { success: false, error: 'email_failed' };
     }
 
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Failed to render/send notification email:', error);
-    return { success: false, error: errorMessage };
+    console.error('Survey email dispatch failed.');
+    return { success: false, error: 'email_failed' };
   }
 }

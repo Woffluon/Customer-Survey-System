@@ -73,6 +73,7 @@ export interface SurveyConfig {
 
 export interface SubmitPayload {
   surveyToken: string;
+  surveySlug?: string;
   turnstileToken: string;
   honeypot: string;
   respondent?: {
@@ -81,6 +82,7 @@ export interface SubmitPayload {
     company?: string;
   };
   answers: Record<string, string | string[] | number>;
+  language?: Language;
 }
 
 export interface ApiSuccessResponse {
