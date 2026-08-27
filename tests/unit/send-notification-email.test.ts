@@ -25,7 +25,14 @@ const survey: SurveyConfig = {
   active: true,
   expiresAt: null,
   respondent: { collectName: true, collectEmail: true, collectCompany: false },
-  questions: [],
+  questions: [
+    {
+      id: 'private_answer',
+      type: 'short_text',
+      label: { tr: 'Gizli soru', en: 'Private question' },
+      required: true,
+    },
+  ],
 };
 
 describe('sendSurveyEmails', () => {
@@ -66,6 +73,23 @@ describe('sendSurveyEmails', () => {
       subject: 'Yanıtınız alındı: Sample Survey',
       html: expect.not.stringContaining('Gizli anket yanıtı'),
     }));
+
+    const [adminMessage, participantMessage] = mocks.resendSend.mock.calls.map(([message]) => message);
+    const attachment = adminMessage.attachments?.[0];
+
+    expect(adminMessage.attachments).toHaveLength(1);
+    expect(attachment?.contentType).toBe('application/json; charset=utf-8');
+    expect(attachment?.filename).toBe('sample-survey-response-2026-08-27T11-30-00-000Z.json');
+    expect(Buffer.isBuffer(attachment?.content)).toBe(true);
+
+    const exported = JSON.parse((attachment?.content as Buffer).toString('utf8'));
+    expect(exported).toMatchObject({
+      format: 'survey-response/v1',
+      respondent: { name: 'Ayşe Yılmaz', email: 'raw@example.com' },
+      answers: [{ questionId: 'private_answer', value: 'Gizli anket yanıtı' }],
+    });
+    expect(JSON.stringify(exported)).not.toContain('127.0.0.1');
+    expect(participantMessage.attachments).toBeUndefined();
   });
 
   it('fails when either provider request fails', async () => {

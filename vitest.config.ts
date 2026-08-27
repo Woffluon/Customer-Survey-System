@@ -20,6 +20,7 @@ export default defineConfig({
       include: [
         'app/api/survey/submit/route.ts',
         'survey/lib/send-notification-email.ts',
+        'survey/lib/survey-response-export.ts',
         'survey/lib/survey-confirmation-email-template.tsx',
         'survey/lib/create-submit-payload.ts',
       ],
