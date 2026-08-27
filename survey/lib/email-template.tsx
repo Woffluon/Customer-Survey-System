@@ -92,6 +92,10 @@ export function SurveyEmailTemplate({
             </Section>
           )}
 
+          <Text style={infoTextStyle}>
+            JSON dışa aktarma dosyası e-postaya eklenmiştir.
+          </Text>
+
           {/* Responses Section */}
           <Section style={{ marginTop: '20px' }}>
             <Text style={cardTitleStyle}>Yanıtlar</Text>

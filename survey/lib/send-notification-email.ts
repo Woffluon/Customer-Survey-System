@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { SurveyConfig, AnswerValue, Language } from './types';
 import { SurveyEmailTemplate } from './email-template';
 import { SurveyConfirmationEmailTemplate } from './survey-confirmation-email-template';
+import { createSurveyResponseAttachment } from './survey-response-export';
 import { getEnv } from './env';
 
 interface SendEmailParams {
@@ -45,6 +46,13 @@ export async function sendSurveyEmails({
     : `Your response has been received: ${surveyConfig.title}`;
 
   try {
+    const responseAttachment = createSurveyResponseAttachment({
+      surveyConfig,
+      answers,
+      respondent,
+      language,
+      submittedAt,
+    });
     const [notificationHtml, confirmationHtml] = await Promise.all([
       render(SurveyEmailTemplate({
         surveyConfig,
@@ -76,6 +84,7 @@ export async function sendSurveyEmails({
         to: [env.NOTIFICATION_TO_EMAIL],
         subject: notificationSubject,
         html: notificationHtml,
+        attachments: [responseAttachment],
       }),
       resend.emails.send({
         from: env.RESEND_FROM_EMAIL,
